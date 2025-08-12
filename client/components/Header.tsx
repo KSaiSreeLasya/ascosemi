@@ -1,0 +1,122 @@
+import { useState, useEffect } from "react";
+import { Menu, X, User } from "lucide-react";
+import { Link } from "react-router-dom";
+
+export default function Header() {
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const navLinks = [
+    { name: "Home", href: "/" },
+    { name: "Services", href: "/services" },
+    { name: "Vision", href: "/vision" },
+    { name: "About us", href: "/about" },
+    { name: "Careers", href: "/careers" },
+  ];
+
+  return (
+    <header
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        isScrolled
+          ? "bg-background/80 backdrop-blur-lg border-b border-border-subtle"
+          : "bg-transparent"
+      }`}
+    >
+      <div className="container mx-auto px-4 lg:px-8">
+        <nav className="flex items-center justify-between h-16 lg:h-20">
+          {/* Logo */}
+          <div className="flex items-center gap-3">
+            <img
+              src="https://cdn.builder.io/api/v1/image/assets%2F9cb17e967f804ce2b909c6bc3232a9f0%2F8ee6d0821d4340c299bf526d740adcab?format=webp&width=200"
+              alt="ASOCSEMI Logo"
+              className="h-8 lg:h-10 w-auto"
+            />
+            <div className="text-xl lg:text-2xl font-bold text-gradient">
+              ASOCSEMI
+            </div>
+          </div>
+
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center space-x-8">
+            {navLinks.map((link) => (
+              <Link
+                key={link.name}
+                to={link.href}
+                className="text-foreground/80 hover:text-tech-blue transition-colors duration-200 text-sm lg:text-base"
+              >
+                {link.name}
+              </Link>
+            ))}
+          </div>
+
+          {/* Auth Buttons */}
+          <div className="hidden md:flex items-center space-x-4">
+            <Link
+              to="/login"
+              className="text-foreground/80 hover:text-tech-blue transition-colors duration-200 flex items-center gap-2"
+            >
+              <User className="w-4 h-4" />
+              Log In
+            </Link>
+            <Link
+              to="/get-started"
+              className="bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-2 rounded-md text-sm lg:text-base transition-all duration-200 hover:scale-105"
+            >
+              Get Started
+            </Link>
+          </div>
+
+          {/* Mobile Menu Button */}
+          <button
+            className="md:hidden p-2 text-foreground"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </nav>
+
+        {/* Mobile Menu */}
+        {isMobileMenuOpen && (
+          <div className="md:hidden bg-card-bg border border-border-subtle rounded-lg mt-2 p-4 animate-fade-in-up">
+            <div className="flex flex-col space-y-4">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.name}
+                  to={link.href}
+                  className="text-foreground/80 hover:text-tech-blue transition-colors duration-200 py-2"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  {link.name}
+                </Link>
+              ))}
+              <Link
+                to="/login"
+                className="text-foreground/80 hover:text-tech-blue transition-colors duration-200 py-2 flex items-center gap-2"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <User className="w-4 h-4" />
+                Log In
+              </Link>
+              <Link
+                to="/get-started"
+                className="bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-3 rounded-md text-center transition-all duration-200"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Get Started
+              </Link>
+            </div>
+          </div>
+        )}
+      </div>
+    </header>
+  );
+}

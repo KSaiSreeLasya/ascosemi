@@ -1,0 +1,184 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /**
+   * Dark theme design based on Anonimo Software design
+   * HSL values for dark tech theme with blue accents and coral highlights
+  */
+  :root {
+    --background: 220 26% 7%;
+    --foreground: 210 40% 98%;
+
+    --card: 220 39% 11%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 220 39% 11%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 9 100% 64%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 220 39% 11%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 220 39% 11%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 214 100% 59%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 220 39% 15%;
+    --input: 220 39% 15%;
+    --ring: 214 100% 59%;
+
+    --radius: 0.5rem;
+
+    /* Custom colors for the design */
+    --tech-blue: 214 100% 59%;
+    --coral: 9 100% 64%;
+    --dark-bg: 220 26% 7%;
+    --card-bg: 220 39% 11%;
+    --border-subtle: 220 39% 15%;
+  }
+
+  .dark {
+    --background: 220 26% 7%;
+    --foreground: 210 40% 98%;
+
+    --card: 220 39% 11%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 220 39% 11%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 9 100% 64%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 220 39% 11%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 220 39% 11%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 214 100% 59%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 220 39% 15%;
+    --input: 220 39% 15%;
+    --ring: 214 100% 59%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer components {
+  .tech-gradient {
+    background: linear-gradient(
+      135deg,
+      hsl(var(--dark-bg)),
+      hsl(var(--card-bg))
+    );
+  }
+
+  .card-hover {
+    transition: all 0.3s ease;
+  }
+
+  .card-hover:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  }
+
+  .floating-animation {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .glow-effect {
+    box-shadow: 0 0 20px hsla(var(--tech-blue), 0.3);
+  }
+
+  .text-gradient {
+    background: linear-gradient(
+      135deg,
+      hsl(var(--tech-blue)),
+      hsl(var(--coral))
+    );
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+}
+
+@layer utilities {
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-20px);
+    }
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes scaleIn {
+    from {
+      opacity: 0;
+      transform: scale(0.8);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  .animate-fadeInUp {
+    animation: fadeInUp 0.6s ease-out;
+  }
+
+  .animate-scaleIn {
+    animation: scaleIn 0.5s ease-out;
+  }
+
+  .animate-delay-200 {
+    animation-delay: 0.2s;
+  }
+
+  .animate-delay-400 {
+    animation-delay: 0.4s;
+  }
+
+  .animate-delay-600 {
+    animation-delay: 0.6s;
+  }
+}
