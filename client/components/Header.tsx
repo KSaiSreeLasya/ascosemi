@@ -1,10 +1,13 @@
 import { useState, useEffect } from "react";
-import { Menu, X, User } from "lucide-react";
+import { Menu, X, User, LogOut } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [showUserMenu, setShowUserMenu] = useState(false);
+  const { user, signOut } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -58,19 +61,57 @@ export default function Header() {
 
           {/* Auth Buttons */}
           <div className="hidden md:flex items-center space-x-4">
-            <Link
-              to="/login"
-              className="text-foreground/80 hover:text-tech-blue transition-colors duration-200 flex items-center gap-2"
-            >
-              <User className="w-4 h-4" />
-              Log In
-            </Link>
-            <Link
-              to="/get-started"
-              className="bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-2 rounded-md text-sm lg:text-base transition-all duration-200 hover:scale-105"
-            >
-              Get Started
-            </Link>
+            {user ? (
+              <div className="relative">
+                <button
+                  onClick={() => setShowUserMenu(!showUserMenu)}
+                  className="flex items-center gap-2 text-foreground/80 hover:text-tech-blue transition-colors duration-200"
+                >
+                  <User className="w-4 h-4" />
+                  <span className="max-w-32 truncate">{user.user_metadata?.full_name || user.email}</span>
+                </button>
+
+                {showUserMenu && (
+                  <div className="absolute right-0 top-full mt-2 w-48 bg-card-bg border border-border-subtle rounded-lg shadow-lg py-2 z-50">
+                    {user.email?.includes('admin') && (
+                      <Link
+                        to="/admin"
+                        className="block px-4 py-2 text-foreground/80 hover:text-tech-blue hover:bg-background/50 transition-colors"
+                        onClick={() => setShowUserMenu(false)}
+                      >
+                        Admin Dashboard
+                      </Link>
+                    )}
+                    <button
+                      onClick={() => {
+                        signOut();
+                        setShowUserMenu(false);
+                      }}
+                      className="w-full text-left px-4 py-2 text-foreground/80 hover:text-tech-blue hover:bg-background/50 transition-colors flex items-center gap-2"
+                    >
+                      <LogOut className="w-4 h-4" />
+                      Sign Out
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <>
+                <Link
+                  to="/login"
+                  className="text-foreground/80 hover:text-tech-blue transition-colors duration-200 flex items-center gap-2"
+                >
+                  <User className="w-4 h-4" />
+                  Log In
+                </Link>
+                <Link
+                  to="/get-started"
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-2 rounded-md text-sm lg:text-base transition-all duration-200 hover:scale-105"
+                >
+                  Get Started
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
