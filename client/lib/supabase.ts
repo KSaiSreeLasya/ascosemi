@@ -11,63 +11,149 @@ const isSupabaseConfigured = () => {
          supabaseAnonKey !== 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0'
 }
 
+// Demo data storage
+const demoUsers = new Map()
+const demoContacts: any[] = []
+const demoApplications: any[] = []
+let currentUser: any = null
+
 // Create a mock client if environment variables are not set or are demo values
 const createSupabaseClient = () => {
   if (!isSupabaseConfigured()) {
     console.warn('⚠️ Supabase not properly configured. Using mock client. Please set up your Supabase project.')
 
-    // Return a comprehensive mock client that won't cause fetch errors
+    // Return a comprehensive mock client with demo functionality
     return {
       auth: {
-        getSession: () => Promise.resolve({ data: { session: null }, error: null }),
-        signInWithPassword: () => Promise.resolve({
-          data: { user: null, session: null },
-          error: { message: 'Please configure Supabase to enable authentication. Check SUPABASE_SETUP.md for instructions.' }
+        getSession: () => Promise.resolve({
+          data: { session: currentUser ? { user: currentUser } : null },
+          error: null
         }),
-        signUp: () => Promise.resolve({
-          data: { user: null, session: null },
-          error: { message: 'Please configure Supabase to enable authentication. Check SUPABASE_SETUP.md for instructions.' }
-        }),
+        signInWithPassword: ({ email, password }: any) => {
+          const user = demoUsers.get(email)
+          if (user && user.password === password) {
+            currentUser = user
+            setTimeout(() => window.location.reload(), 100) // Trigger auth state change
+            return Promise.resolve({
+              data: { user: currentUser, session: { user: currentUser } },
+              error: null
+            })
+          }
+          return Promise.resolve({
+            data: { user: null, session: null },
+            error: { message: 'Invalid email or password (Demo Mode - Try creating an account first)' }
+          })
+        },
+        signUp: ({ email, password, options }: any) => {
+          if (demoUsers.has(email)) {
+            return Promise.resolve({
+              data: { user: null, session: null },
+              error: { message: 'User already exists (Demo Mode)' }
+            })
+          }
+
+          const newUser = {
+            id: `demo-${Date.now()}`,
+            email,
+            password,
+            user_metadata: options?.data || {},
+            created_at: new Date().toISOString()
+          }
+
+          demoUsers.set(email, newUser)
+          currentUser = newUser
+
+          // Auto-login after signup
+          setTimeout(() => window.location.reload(), 100)
+          return Promise.resolve({
+            data: { user: newUser, session: { user: newUser } },
+            error: null
+          })
+        },
         signInWithOAuth: () => Promise.resolve({
           data: { url: null, provider: null },
-          error: { message: 'Please configure Supabase to enable OAuth authentication. Check SUPABASE_SETUP.md for instructions.' }
+          error: { message: 'OAuth not available in demo mode. Use email signup/login instead.' }
         }),
-        signOut: () => Promise.resolve({ error: null }),
+        signOut: () => {
+          currentUser = null
+          setTimeout(() => window.location.reload(), 100)
+          return Promise.resolve({ error: null })
+        },
         onAuthStateChange: (callback: any) => {
-          // Call the callback immediately with no session
-          setTimeout(() => callback('SIGNED_OUT', null), 0)
+          // Call the callback immediately with current session
+          setTimeout(() => callback(currentUser ? 'SIGNED_IN' : 'SIGNED_OUT', currentUser ? { user: currentUser } : null), 0)
           return { data: { subscription: { unsubscribe: () => {} } } }
         }
       },
       from: (table: string) => ({
-        insert: () => Promise.resolve({
-          data: null,
-          error: { message: `Please configure Supabase to store data in ${table}. Check SUPABASE_SETUP.md for instructions.` }
+        insert: (data: any) => {
+          const record = {
+            id: `demo-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+            ...data[0],
+            created_at: new Date().toISOString()
+          }
+
+          if (table === 'contacts') {
+            demoContacts.push(record)
+          } else if (table === 'job_applications') {
+            demoApplications.push(record)
+          } else if (table === 'users') {
+            // Handle user profile upsert
+            return Promise.resolve({ data: [record], error: null })
+          }
+
+          return Promise.resolve({ data: [record], error: null })
+        },
+        select: (columns: string = '*') => ({
+          order: (column: string, options?: any) => {
+            let data: any[] = []
+            if (table === 'contacts') {
+              data = [...demoContacts]
+            } else if (table === 'job_applications') {
+              data = [...demoApplications]
+            }
+
+            // Sort by created_at descending if that's the order
+            if (column === 'created_at' && options?.ascending === false) {
+              data.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+            }
+
+            return Promise.resolve({ data, error: null })
+          }
         }),
-        select: () => ({
-          order: () => Promise.resolve({
-            data: [],
-            error: { message: `Please configure Supabase to read data from ${table}. Check SUPABASE_SETUP.md for instructions.` }
-          })
+        update: (updateData: any) => ({
+          eq: (column: string, value: any) => {
+            if (table === 'job_applications') {
+              const app = demoApplications.find(a => a.id === value)
+              if (app) {
+                Object.assign(app, updateData)
+                return Promise.resolve({ data: [app], error: null })
+              }
+            }
+            return Promise.resolve({ data: null, error: { message: 'Record not found' } })
+          }
         }),
-        update: () => ({
-          eq: () => Promise.resolve({
-            data: null,
-            error: { message: `Please configure Supabase to update data in ${table}. Check SUPABASE_SETUP.md for instructions.` }
-          })
-        }),
-        upsert: () => Promise.resolve({
-          data: null,
-          error: { message: `Please configure Supabase to store data in ${table}. Check SUPABASE_SETUP.md for instructions.` }
-        })
+        upsert: (data: any) => {
+          // For user profiles
+          if (table === 'users') {
+            return Promise.resolve({ data: [data], error: null })
+          }
+          return Promise.resolve({ data: [data], error: null })
+        }
       }),
       storage: {
         from: () => ({
-          upload: () => Promise.resolve({
-            data: null,
-            error: { message: 'Please configure Supabase storage to enable file uploads. Check SUPABASE_SETUP.md for instructions.' }
-          }),
-          getPublicUrl: () => ({ data: { publicUrl: '' } })
+          upload: (path: string, file: File) => {
+            // Simulate file upload by creating a demo URL
+            const demoUrl = `demo-storage/${file.name}-${Date.now()}`
+            return Promise.resolve({
+              data: { path: demoUrl },
+              error: null
+            })
+          },
+          getPublicUrl: (path: string) => ({
+            data: { publicUrl: `https://demo-storage.example.com/${path}` }
+          })
         })
       }
     }
