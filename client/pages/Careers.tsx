@@ -118,11 +118,11 @@ export default function Careers() {
         "Lead VLSI design projects for next-generation semiconductor solutions.",
     },
     {
-      title: "Software Developer - AI/ML",
-      department: "Software Development",
+      title: "Design verification engineer",
+      department: "Semiconductors  Development",
       location: "Hyderabad, India",
       type: "Full-time",
-      description: "Develop cutting-edge AI and machine learning applications.",
+      description: "Understanding of PG-Grid optimization, including identification of high vs low current density paths & layer/via optimization, Adaptive PDN experience",
     },
     {
       title: "Hardware Verification Engineer",
@@ -133,27 +133,27 @@ export default function Careers() {
         "Verify complex hardware designs using industry-standard methodologies.",
     },
     {
-      title: "Product Manager - IoT Solutions",
-      department: "Product",
+      title: "STA Engineer",
+      department: "Semiconductors  Development",
       location: "Mumbai, India",
       type: "Full-time",
-      description: "Drive product strategy for innovative IoT solutions.",
+      description: "xperience of multiple power domain implementation with complex UPF/CPF definition requireds.",
     },
     {
-      title: "DevOps Engineer",
+      title: "RTL Design Engineer",
       department: "Infrastructure",
       location: "Remote",
       type: "Full-time",
       description:
-        "Build and maintain scalable cloud infrastructure and deployment pipelines.",
+        "Hands-on experience in Linting, CDC – analysis of reports, identify ways to fix the violations",
     },
     {
-      title: "UI/UX Designer",
+      title: "DFT Engineer",
       department: "Design",
       location: "Pune, India",
       type: "Full-time",
       description:
-        "Create intuitive and engaging user experiences for our technology platforms.",
+        "Proficient in Scan, specializing in ATPG and Pattern verification at Block and Full chip level..",
     },
   ];
 
