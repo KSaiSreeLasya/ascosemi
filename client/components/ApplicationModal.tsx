@@ -244,35 +244,56 @@ export default function ApplicationModal({
               placeholder="e.g., Software Engineer, VLSI Designer"
               className="w-full bg-background border border-border-subtle rounded-lg px-4 py-3 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-tech-blue transition-all duration-200"
               required
+              readOnly
             />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-foreground mb-2 text-sm font-medium">
-                Start Date
-              </label>
-              <input
-                type="date"
-                name="startDate"
-                value={formData.startDate}
-                onChange={handleInputChange}
-                className="w-full bg-background border border-border-subtle rounded-lg px-4 py-3 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-tech-blue transition-all duration-200"
-              />
-            </div>
-            <div>
-              <label className="block text-foreground mb-2 text-sm font-medium">
-                LinkedIn URL
-              </label>
-              <input
-                type="url"
-                name="linkedinUrl"
-                value={formData.linkedinUrl}
-                onChange={handleInputChange}
-                placeholder="https://linkedin.com/in/yourprofile"
-                className="w-full bg-background border border-border-subtle rounded-lg px-4 py-3 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-tech-blue transition-all duration-200"
-              />
-            </div>
+          <div>
+            <label className="block text-foreground mb-2 text-sm font-medium">
+              Years of Experience *
+            </label>
+            <select
+              name="experience"
+              value={formData.experience}
+              onChange={handleInputChange}
+              className="w-full bg-background border border-border-subtle rounded-lg px-4 py-3 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-tech-blue transition-all duration-200"
+              required
+            >
+              <option value="">Select experience level</option>
+              <option value="0-1">0-1 years</option>
+              <option value="2-3">2-3 years</option>
+              <option value="4-6">4-6 years</option>
+              <option value="7-10">7-10 years</option>
+              <option value="10+">10+ years</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-foreground mb-2 text-sm font-medium">
+              Cover Letter
+            </label>
+            <textarea
+              name="coverLetter"
+              value={formData.coverLetter}
+              onChange={(e) => handleInputChange(e as any)}
+              placeholder="Tell us why you're interested in this position..."
+              rows={4}
+              className="w-full bg-background border border-border-subtle rounded-lg px-4 py-3 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-tech-blue transition-all duration-200 resize-none"
+            />
+          </div>
+
+          <div>
+            <label className="block text-foreground mb-2 text-sm font-medium">
+              LinkedIn URL
+            </label>
+            <input
+              type="url"
+              name="linkedinUrl"
+              value={formData.linkedinUrl}
+              onChange={handleInputChange}
+              placeholder="https://linkedin.com/in/yourprofile"
+              className="w-full bg-background border border-border-subtle rounded-lg px-4 py-3 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-tech-blue transition-all duration-200"
+            />
           </div>
 
           <div>
@@ -320,10 +341,15 @@ export default function ApplicationModal({
             </button>
             <button
               type="submit"
-              className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground py-3 rounded-lg transition-all duration-200 hover:scale-105 flex items-center justify-center gap-2 group"
+              disabled={uploading}
+              className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground py-3 rounded-lg transition-all duration-200 hover:scale-105 flex items-center justify-center gap-2 group disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <Send className="w-4 h-4" />
-              Apply
+              {uploading ? (
+                <div className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
+              ) : (
+                <Send className="w-4 h-4" />
+              )}
+              {uploading ? 'Submitting...' : 'Apply'}
             </button>
           </div>
         </form>
