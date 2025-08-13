@@ -94,15 +94,25 @@ const createSupabaseClient = () => {
         },
         onAuthStateChange: (callback: any) => {
           // Call the callback immediately with current session
-          setTimeout(
-            () =>
+          setTimeout(() => {
+            try {
               callback(
                 currentUser ? "SIGNED_IN" : "SIGNED_OUT",
                 currentUser ? { user: currentUser } : null,
-              ),
-            0,
-          );
-          return { data: { subscription: { unsubscribe: () => {} } } };
+              );
+            } catch (error) {
+              console.warn('Mock auth state change callback error:', error);
+            }
+          }, 0);
+          return {
+            data: {
+              subscription: {
+                unsubscribe: () => {
+                  console.log('Mock auth subscription unsubscribed');
+                }
+              }
+            }
+          };
         },
       },
       from: (table: string) => ({
