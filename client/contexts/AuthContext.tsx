@@ -28,39 +28,55 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     let mounted = true;
 
     async function getInitialSession() {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
+      try {
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
 
-      if (mounted) {
-        setSession(session);
-        setUser(session?.user ?? null);
-        setLoading(false);
+        if (mounted) {
+          setSession(session);
+          setUser(session?.user ?? null);
+          setLoading(false);
+        }
+      } catch (error) {
+        console.warn('Auth initialization error:', error);
+        if (mounted) {
+          setSession(null);
+          setUser(null);
+          setLoading(false);
+        }
       }
     }
 
     getInitialSession();
 
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(
-      async (event: AuthChangeEvent, session: Session | null) => {
-        if (mounted) {
-          setSession(session);
-          setUser(session?.user ?? null);
-          setLoading(false);
+    try {
+      const {
+        data: { subscription },
+      } = supabase.auth.onAuthStateChange(
+        async (event: AuthChangeEvent, session: Session | null) => {
+          if (mounted) {
+            setSession(session);
+            setUser(session?.user ?? null);
+            setLoading(false);
 
-          if (event === "SIGNED_IN" && session?.user) {
-            await upsertUserProfile(session.user);
+            if (event === "SIGNED_IN" && session?.user) {
+              await upsertUserProfile(session.user);
+            }
           }
-        }
-      },
-    );
+        },
+      );
 
-    return () => {
-      mounted = false;
-      subscription?.unsubscribe();
-    };
+      return () => {
+        mounted = false;
+        subscription?.unsubscribe();
+      };
+    } catch (error) {
+      console.warn('Auth state change setup error:', error);
+      return () => {
+        mounted = false;
+      };
+    }
   }, []);
 
   const upsertUserProfile = async (user: User) => {
