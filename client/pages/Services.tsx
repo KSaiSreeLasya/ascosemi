@@ -43,9 +43,8 @@ function Section({ children, className = "" }: SectionProps) {
   return (
     <div
       ref={ref}
-      className={`transition-all duration-1000 ${
-        isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
-      } ${className}`}
+      className={`transition-all duration-1000 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
+        } ${className}`}
     >
       {children}
     </div>
@@ -75,60 +74,60 @@ export default function Services() {
     },
     {
       icon: <Code className="w-12 h-12" />,
-      title: "Custom Software Development",
+      title: "Design Verification",
       description:
-        "Tailored software solutions built with cutting-edge technologies to meet your unique business requirements.",
+        "Multi-million gate designs verification using advanced verification methods and tools.",
       features: [
-        "Web Applications",
-        "Mobile Apps",
-        "Desktop Software",
-        "API Development",
+        "UVM Verification",
+        "Formal Verification",
+        "SystemVerilog Verification",
+        "FPGA Verification",
       ],
     },
     {
       icon: <Database className="w-12 h-12" />,
-      title: "Data Analytics & AI",
+      title: "Product solutions",
       description:
-        "Transform your data into actionable insights with our advanced analytics and artificial intelligence solutions.",
+        "Expertise in providing solutions to build highly reliable and rugged electronics products.",
       features: [
-        "Machine Learning",
-        "Data Visualization",
-        "Predictive Analytics",
-        "Business Intelligence",
+        "Embedded Systems",
+        "IoT Solutions",
+        "Robotics",
+        "Automotive Electronics",
       ],
     },
     {
       icon: <Globe className="w-12 h-12" />,
-      title: "Cloud Infrastructure",
+      title: "RLT design",
       description:
-        "Scalable cloud solutions designed to support your business growth and digital transformation initiatives.",
+        "End-to-end design services from specifications to GDS.",
       features: [
-        "Cloud Migration",
-        "DevOps Services",
-        "Infrastructure as Code",
-        "Security Management",
+        "RTL Design",
+        "Synthesis",
+        "Place and Route",
+        "Timing Analysis",
       ],
     },
     {
       icon: <Shield className="w-12 h-12" />,
-      title: "Cybersecurity",
+      title: "Synthesis and STA",
       description:
-        "Comprehensive security solutions to protect your digital assets and ensure business continuity.",
+        "Expertise in synthesis,constraints development and timiing closue. ",
       features: [
-        "Security Audits",
-        "Penetration Testing",
-        "Compliance Management",
-        "Incident Response",
+        "Synthesis",
+        "Constraints Development",
+        "Timing Closure",
+        "Power Analysis",
       ],
     },
     {
       icon: <Zap className="w-12 h-12" />,
-      title: "IoT Solutions",
+      title: "Silicon validation",
       description:
-        "End-to-end Internet of Things solutions connecting devices and enabling smart operations.",
+        "Functional validation services for SoC and ASIC designs.",
       features: [
-        "Device Connectivity",
-        "Edge Computing",
+        "Functional Verification",
+        "UVM Verification",
         "Real-time Monitoring",
         "Predictive Maintenance",
       ],
@@ -144,11 +143,10 @@ export default function Services() {
         <div className="container mx-auto px-4 lg:px-8">
           <div className="max-w-4xl mx-auto text-center">
             <div
-              className={`transition-all duration-1000 ${
-                isVisible
+              className={`transition-all duration-1000 ${isVisible
                   ? "opacity-100 translate-y-0"
                   : "opacity-0 translate-y-10"
-              }`}
+                }`}
             >
               <h1 className="text-4xl md:text-6xl font-bold text-foreground mb-6">
                 Our <span className="text-gradient">Services</span>
