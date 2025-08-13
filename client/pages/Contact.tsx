@@ -1,59 +1,61 @@
-import { useState } from 'react'
-import { Mail, Phone, MapPin, Send, CheckCircle } from 'lucide-react'
-import Header from '../components/Header'
-import { supabase } from '../lib/supabase'
+import { useState } from "react";
+import { Mail, Phone, MapPin, Send, CheckCircle } from "lucide-react";
+import Header from "../components/Header";
+import { supabase } from "../lib/supabase";
 
 export default function Contact() {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    company: '',
-    message: ''
-  })
-  const [loading, setLoading] = useState(false)
-  const [submitted, setSubmitted] = useState(false)
-  const [error, setError] = useState('')
+    name: "",
+    email: "",
+    phone: "",
+    company: "",
+    message: "",
+  });
+  const [loading, setLoading] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData(prev => ({
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    setFormData((prev) => ({
       ...prev,
-      [e.target.name]: e.target.value
-    }))
-  }
+      [e.target.name]: e.target.value,
+    }));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-    setError('')
+    e.preventDefault();
+    setLoading(true);
+    setError("");
 
     try {
-      const { error } = await supabase
-        .from('contacts')
-        .insert([{
+      const { error } = await supabase.from("contacts").insert([
+        {
           name: formData.name,
           email: formData.email,
           phone: formData.phone || null,
           company: formData.company || null,
-          message: formData.message
-        }])
+          message: formData.message,
+        },
+      ]);
 
-      if (error) throw error
+      if (error) throw error;
 
-      setSubmitted(true)
+      setSubmitted(true);
       setFormData({
-        name: '',
-        email: '',
-        phone: '',
-        company: '',
-        message: ''
-      })
+        name: "",
+        email: "",
+        phone: "",
+        company: "",
+        message: "",
+      });
     } catch (error: any) {
-      setError(error.message)
+      setError(error.message);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   if (submitted) {
     return (
@@ -67,7 +69,8 @@ export default function Contact() {
                 Thank You!
               </h1>
               <p className="text-foreground/70 text-lg mb-8">
-                Your message has been sent successfully. We'll get back to you within 24 hours.
+                Your message has been sent successfully. We'll get back to you
+                within 24 hours.
               </p>
               <button
                 onClick={() => setSubmitted(false)}
@@ -79,13 +82,13 @@ export default function Contact() {
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-tech-dark via-primary/10 to-background">
       <Header />
-      
+
       <div className="pt-20 pb-16 px-4">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-16">
@@ -93,7 +96,8 @@ export default function Contact() {
               Get in <span className="text-gradient">Touch</span>
             </h1>
             <p className="text-xl text-foreground/70 max-w-3xl mx-auto">
-              Ready to start your project? Let's discuss how we can help bring your vision to life.
+              Ready to start your project? Let's discuss how we can help bring
+              your vision to life.
             </p>
           </div>
 
@@ -101,15 +105,19 @@ export default function Contact() {
             {/* Contact Information */}
             <div className="space-y-8">
               <div className="bg-card-bg border border-border-subtle rounded-xl p-8">
-                <h2 className="text-2xl font-bold text-foreground mb-6">Contact Information</h2>
-                
+                <h2 className="text-2xl font-bold text-foreground mb-6">
+                  Contact Information
+                </h2>
+
                 <div className="space-y-6">
                   <div className="flex items-start gap-4">
                     <div className="bg-tech-blue/10 p-3 rounded-lg">
                       <Mail className="w-6 h-6 text-tech-blue" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-foreground mb-1">Email</h3>
+                      <h3 className="font-semibold text-foreground mb-1">
+                        Email
+                      </h3>
                       <p className="text-foreground/70">contact@asocsemi.com</p>
                       <p className="text-foreground/70">support@asocsemi.com</p>
                     </div>
@@ -120,7 +128,9 @@ export default function Contact() {
                       <Phone className="w-6 h-6 text-tech-blue" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-foreground mb-1">Phone</h3>
+                      <h3 className="font-semibold text-foreground mb-1">
+                        Phone
+                      </h3>
                       <p className="text-foreground/70">+1 (555) 123-4567</p>
                       <p className="text-foreground/70">+1 (555) 987-6543</p>
                     </div>
@@ -131,10 +141,14 @@ export default function Contact() {
                       <MapPin className="w-6 h-6 text-tech-blue" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-foreground mb-1">Office</h3>
+                      <h3 className="font-semibold text-foreground mb-1">
+                        Office
+                      </h3>
                       <p className="text-foreground/70">
-                        123 Tech Street<br />
-                        Innovation District<br />
+                        123 Tech Street
+                        <br />
+                        Innovation District
+                        <br />
                         San Francisco, CA 94102
                       </p>
                     </div>
@@ -143,19 +157,31 @@ export default function Contact() {
               </div>
 
               <div className="bg-card-bg border border-border-subtle rounded-xl p-8">
-                <h2 className="text-2xl font-bold text-foreground mb-4">Office Hours</h2>
+                <h2 className="text-2xl font-bold text-foreground mb-4">
+                  Office Hours
+                </h2>
                 <div className="space-y-2 text-foreground/70">
-                  <p><span className="font-medium">Monday - Friday:</span> 9:00 AM - 6:00 PM</p>
-                  <p><span className="font-medium">Saturday:</span> 10:00 AM - 4:00 PM</p>
-                  <p><span className="font-medium">Sunday:</span> Closed</p>
+                  <p>
+                    <span className="font-medium">Monday - Friday:</span> 9:00
+                    AM - 6:00 PM
+                  </p>
+                  <p>
+                    <span className="font-medium">Saturday:</span> 10:00 AM -
+                    4:00 PM
+                  </p>
+                  <p>
+                    <span className="font-medium">Sunday:</span> Closed
+                  </p>
                 </div>
               </div>
             </div>
 
             {/* Contact Form */}
             <div className="bg-card-bg border border-border-subtle rounded-xl p-8">
-              <h2 className="text-2xl font-bold text-foreground mb-6">Send us a Message</h2>
-              
+              <h2 className="text-2xl font-bold text-foreground mb-6">
+                Send us a Message
+              </h2>
+
               {error && (
                 <div className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-lg mb-6">
                   {error}
@@ -258,5 +284,5 @@ export default function Contact() {
         </div>
       </div>
     </div>
-  )
+  );
 }

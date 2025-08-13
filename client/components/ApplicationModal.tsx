@@ -53,25 +53,23 @@ export default function ApplicationModal({
 
   const uploadResume = async (file: File): Promise<string | null> => {
     try {
-      const fileExt = file.name.split('.').pop();
+      const fileExt = file.name.split(".").pop();
       const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
       const filePath = `resumes/${fileName}`;
 
       const { error: uploadError } = await supabase.storage
-        .from('resumes')
+        .from("resumes")
         .upload(filePath, file);
 
       if (uploadError) {
         throw uploadError;
       }
 
-      const { data } = supabase.storage
-        .from('resumes')
-        .getPublicUrl(filePath);
+      const { data } = supabase.storage.from("resumes").getPublicUrl(filePath);
 
       return data.publicUrl;
     } catch (error) {
-      console.error('Error uploading file:', error);
+      console.error("Error uploading file:", error);
       throw error;
     }
   };
@@ -101,9 +99,8 @@ export default function ApplicationModal({
       }
 
       // Submit application to database
-      const { error } = await supabase
-        .from('job_applications')
-        .insert([{
+      const { error } = await supabase.from("job_applications").insert([
+        {
           user_id: user?.id || null,
           full_name: `${formData.firstName} ${formData.lastName}`,
           email: formData.email,
@@ -112,8 +109,9 @@ export default function ApplicationModal({
           experience: formData.experience,
           cover_letter: formData.coverLetter,
           resume_url: resumeUrl,
-          status: 'pending'
-        }]);
+          status: "pending",
+        },
+      ]);
 
       if (error) throw error;
 
@@ -349,7 +347,7 @@ export default function ApplicationModal({
               ) : (
                 <Send className="w-4 h-4" />
               )}
-              {uploading ? 'Submitting...' : 'Apply'}
+              {uploading ? "Submitting..." : "Apply"}
             </button>
           </div>
         </form>

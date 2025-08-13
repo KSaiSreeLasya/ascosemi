@@ -5,6 +5,7 @@ This guide will help you set up Supabase with authentication, database, and file
 ## 1. Connect Supabase MCP Integration
 
 **First, connect to Supabase through Builder.io:**
+
 - Click [Open MCP popover](#open-mcp-popover)
 - Find and connect **Supabase** from the available integrations
 - This will give you direct access to manage your Supabase project
@@ -37,6 +38,7 @@ SUPABASE_SERVICE_ROLE_KEY=your_service_role_key_here
 ```
 
 **Or use DevServerControl to set environment variables securely:**
+
 - This is recommended for sensitive data like API keys
 
 ## 5. Database Schema Setup
@@ -111,8 +113,8 @@ CREATE POLICY "Anyone can insert contacts" ON contacts
 CREATE POLICY "Admins can view contacts" ON contacts
   FOR SELECT USING (
     EXISTS (
-      SELECT 1 FROM auth.users 
-      WHERE auth.users.id = auth.uid() 
+      SELECT 1 FROM auth.users
+      WHERE auth.users.id = auth.uid()
       AND auth.users.email LIKE '%admin%'
     )
   );
@@ -123,10 +125,10 @@ CREATE POLICY "Anyone can insert applications" ON job_applications
 
 CREATE POLICY "Users can view own applications" ON job_applications
   FOR SELECT USING (
-    auth.uid() = user_id OR 
+    auth.uid() = user_id OR
     EXISTS (
-      SELECT 1 FROM auth.users 
-      WHERE auth.users.id = auth.uid() 
+      SELECT 1 FROM auth.users
+      WHERE auth.users.id = auth.uid()
       AND auth.users.email LIKE '%admin%'
     )
   );
@@ -134,8 +136,8 @@ CREATE POLICY "Users can view own applications" ON job_applications
 CREATE POLICY "Admins can update applications" ON job_applications
   FOR UPDATE USING (
     EXISTS (
-      SELECT 1 FROM auth.users 
-      WHERE auth.users.id = auth.uid() 
+      SELECT 1 FROM auth.users
+      WHERE auth.users.id = auth.uid()
       AND auth.users.email LIKE '%admin%'
     )
   );
@@ -161,8 +163,8 @@ CREATE POLICY "Admins can delete resumes" ON storage.objects
   FOR DELETE USING (
     bucket_id = 'resumes' AND
     EXISTS (
-      SELECT 1 FROM auth.users 
-      WHERE auth.users.id = auth.uid() 
+      SELECT 1 FROM auth.users
+      WHERE auth.users.id = auth.uid()
       AND auth.users.email LIKE '%admin%'
     )
   );
@@ -175,6 +177,7 @@ CREATE POLICY "Admins can delete resumes" ON storage.objects
 1. Go to **Authentication** → **Settings** in Supabase
 2. Find **Google** provider and enable it
 3. Get Google OAuth credentials:
+
    - Go to [Google Cloud Console](https://console.cloud.google.com)
    - Create/select a project
    - Enable Google+ API
@@ -190,6 +193,7 @@ CREATE POLICY "Admins can delete resumes" ON storage.objects
 
 1. Enable **Facebook** provider in Supabase
 2. Get Facebook OAuth credentials:
+
    - Go to [Facebook Developers](https://developers.facebook.com)
    - Create a new app
    - Add Facebook Login product
@@ -203,17 +207,20 @@ CREATE POLICY "Admins can delete resumes" ON storage.objects
 ## 8. Test the Integration
 
 ### Test Authentication
+
 1. Visit `/login` page
 2. Try signing up with email
 3. Test Google OAuth login
 4. Test Facebook OAuth login
 
 ### Test Contact Form
+
 1. Visit `/contact` page
 2. Fill out and submit the form
 3. Check Supabase database for the record
 
 ### Test Job Applications
+
 1. Visit `/careers` page
 2. Click "Apply Now" on any job
 3. Fill out the application form
@@ -221,6 +228,7 @@ CREATE POLICY "Admins can delete resumes" ON storage.objects
 5. Submit the application
 
 ### Test Admin Dashboard
+
 1. Create an admin user (email containing "admin")
 2. Visit `/admin` page
 3. View applications and contacts
@@ -268,6 +276,7 @@ DROP TABLE IF EXISTS users CASCADE;
 ## Support
 
 For issues specific to this integration:
+
 1. Check the browser console for error messages
 2. Verify Supabase dashboard for data and logs
 3. Test with Supabase's built-in API documentation

@@ -1,113 +1,127 @@
-import { useState, useEffect } from 'react'
-import { Eye, Download, Users, Briefcase, Mail, Filter, Search } from 'lucide-react'
-import Header from '../components/Header'
-import { useAuth } from '../contexts/AuthContext'
-import { supabase } from '../lib/supabase'
+import { useState, useEffect } from "react";
+import {
+  Eye,
+  Download,
+  Users,
+  Briefcase,
+  Mail,
+  Filter,
+  Search,
+} from "lucide-react";
+import Header from "../components/Header";
+import { useAuth } from "../contexts/AuthContext";
+import { supabase } from "../lib/supabase";
 
 interface Application {
-  id: string
-  full_name: string
-  email: string
-  phone: string
-  position: string
-  experience: string
-  cover_letter: string
-  resume_url: string
-  status: string
-  created_at: string
+  id: string;
+  full_name: string;
+  email: string;
+  phone: string;
+  position: string;
+  experience: string;
+  cover_letter: string;
+  resume_url: string;
+  status: string;
+  created_at: string;
 }
 
 interface Contact {
-  id: string
-  name: string
-  email: string
-  phone: string
-  company: string
-  message: string
-  created_at: string
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  company: string;
+  message: string;
+  created_at: string;
 }
 
 export default function AdminDashboard() {
-  const { user } = useAuth()
-  const [applications, setApplications] = useState<Application[]>([])
-  const [contacts, setContacts] = useState<Contact[]>([])
-  const [activeTab, setActiveTab] = useState<'applications' | 'contacts'>('applications')
-  const [loading, setLoading] = useState(true)
-  const [filter, setFilter] = useState('')
-  const [statusFilter, setStatusFilter] = useState('')
+  const { user } = useAuth();
+  const [applications, setApplications] = useState<Application[]>([]);
+  const [contacts, setContacts] = useState<Contact[]>([]);
+  const [activeTab, setActiveTab] = useState<"applications" | "contacts">(
+    "applications",
+  );
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
 
   useEffect(() => {
-    fetchData()
-  }, [])
+    fetchData();
+  }, []);
 
   const fetchData = async () => {
     try {
-      setLoading(true)
-      
+      setLoading(true);
+
       // Fetch applications
       const { data: applicationsData, error: appsError } = await supabase
-        .from('job_applications')
-        .select('*')
-        .order('created_at', { ascending: false })
+        .from("job_applications")
+        .select("*")
+        .order("created_at", { ascending: false });
 
-      if (appsError) throw appsError
-      setApplications(applicationsData || [])
+      if (appsError) throw appsError;
+      setApplications(applicationsData || []);
 
       // Fetch contacts
       const { data: contactsData, error: contactsError } = await supabase
-        .from('contacts')
-        .select('*')
-        .order('created_at', { ascending: false })
+        .from("contacts")
+        .select("*")
+        .order("created_at", { ascending: false });
 
-      if (contactsError) throw contactsError
-      setContacts(contactsData || [])
+      if (contactsError) throw contactsError;
+      setContacts(contactsData || []);
     } catch (error) {
-      console.error('Error fetching data:', error)
+      console.error("Error fetching data:", error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const updateApplicationStatus = async (id: string, status: string) => {
     try {
       const { error } = await supabase
-        .from('job_applications')
+        .from("job_applications")
         .update({ status })
-        .eq('id', id)
+        .eq("id", id);
 
-      if (error) throw error
-      
-      setApplications(prev => 
-        prev.map(app => app.id === id ? { ...app, status } : app)
-      )
+      if (error) throw error;
+
+      setApplications((prev) =>
+        prev.map((app) => (app.id === id ? { ...app, status } : app)),
+      );
     } catch (error) {
-      console.error('Error updating status:', error)
+      console.error("Error updating status:", error);
     }
-  }
+  };
 
-  const filteredApplications = applications.filter(app => {
-    const matchesSearch = app.full_name.toLowerCase().includes(filter.toLowerCase()) ||
-                         app.email.toLowerCase().includes(filter.toLowerCase()) ||
-                         app.position.toLowerCase().includes(filter.toLowerCase())
-    const matchesStatus = !statusFilter || app.status === statusFilter
-    return matchesSearch && matchesStatus
-  })
+  const filteredApplications = applications.filter((app) => {
+    const matchesSearch =
+      app.full_name.toLowerCase().includes(filter.toLowerCase()) ||
+      app.email.toLowerCase().includes(filter.toLowerCase()) ||
+      app.position.toLowerCase().includes(filter.toLowerCase());
+    const matchesStatus = !statusFilter || app.status === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
 
-  const filteredContacts = contacts.filter(contact =>
-    contact.name.toLowerCase().includes(filter.toLowerCase()) ||
-    contact.email.toLowerCase().includes(filter.toLowerCase()) ||
-    contact.company?.toLowerCase().includes(filter.toLowerCase())
-  )
+  const filteredContacts = contacts.filter(
+    (contact) =>
+      contact.name.toLowerCase().includes(filter.toLowerCase()) ||
+      contact.email.toLowerCase().includes(filter.toLowerCase()) ||
+      contact.company?.toLowerCase().includes(filter.toLowerCase()),
+  );
 
   // Basic admin check - in a real app you'd have proper role management
-  if (!user || !user.email?.includes('admin')) {
+  if (!user || !user.email?.includes("admin")) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-tech-dark via-primary/10 to-background">
         <Header />
         <div className="pt-20 pb-16 px-4">
           <div className="container mx-auto max-w-2xl text-center">
             <div className="bg-card-bg border border-border-subtle rounded-xl p-12">
-              <h1 className="text-3xl font-bold text-foreground mb-4">Access Denied</h1>
+              <h1 className="text-3xl font-bold text-foreground mb-4">
+                Access Denied
+              </h1>
               <p className="text-foreground/70">
                 You don't have permission to access the admin dashboard.
               </p>
@@ -115,13 +129,13 @@ export default function AdminDashboard() {
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-tech-dark via-primary/10 to-background">
       <Header />
-      
+
       <div className="pt-20 pb-16 px-4">
         <div className="container mx-auto max-w-7xl">
           <div className="mb-8">
@@ -141,7 +155,9 @@ export default function AdminDashboard() {
                   <Briefcase className="w-6 h-6 text-tech-blue" />
                 </div>
                 <div>
-                  <h3 className="text-2xl font-bold text-foreground">{applications.length}</h3>
+                  <h3 className="text-2xl font-bold text-foreground">
+                    {applications.length}
+                  </h3>
                   <p className="text-foreground/70">Total Applications</p>
                 </div>
               </div>
@@ -154,7 +170,10 @@ export default function AdminDashboard() {
                 </div>
                 <div>
                   <h3 className="text-2xl font-bold text-foreground">
-                    {applications.filter(app => app.status === 'pending').length}
+                    {
+                      applications.filter((app) => app.status === "pending")
+                        .length
+                    }
                   </h3>
                   <p className="text-foreground/70">Pending Review</p>
                 </div>
@@ -167,7 +186,9 @@ export default function AdminDashboard() {
                   <Mail className="w-6 h-6 text-primary" />
                 </div>
                 <div>
-                  <h3 className="text-2xl font-bold text-foreground">{contacts.length}</h3>
+                  <h3 className="text-2xl font-bold text-foreground">
+                    {contacts.length}
+                  </h3>
                   <p className="text-foreground/70">Contact Messages</p>
                 </div>
               </div>
@@ -178,21 +199,21 @@ export default function AdminDashboard() {
           <div className="bg-card-bg border border-border-subtle rounded-xl mb-6">
             <div className="flex">
               <button
-                onClick={() => setActiveTab('applications')}
+                onClick={() => setActiveTab("applications")}
                 className={`flex-1 py-4 px-6 text-center font-medium transition-colors ${
-                  activeTab === 'applications'
-                    ? 'bg-primary text-primary-foreground rounded-l-xl'
-                    : 'text-foreground/70 hover:text-foreground'
+                  activeTab === "applications"
+                    ? "bg-primary text-primary-foreground rounded-l-xl"
+                    : "text-foreground/70 hover:text-foreground"
                 }`}
               >
                 Job Applications ({applications.length})
               </button>
               <button
-                onClick={() => setActiveTab('contacts')}
+                onClick={() => setActiveTab("contacts")}
                 className={`flex-1 py-4 px-6 text-center font-medium transition-colors ${
-                  activeTab === 'contacts'
-                    ? 'bg-primary text-primary-foreground rounded-r-xl'
-                    : 'text-foreground/70 hover:text-foreground'
+                  activeTab === "contacts"
+                    ? "bg-primary text-primary-foreground rounded-r-xl"
+                    : "text-foreground/70 hover:text-foreground"
                 }`}
               >
                 Contact Messages ({contacts.length})
@@ -215,8 +236,8 @@ export default function AdminDashboard() {
                   />
                 </div>
               </div>
-              
-              {activeTab === 'applications' && (
+
+              {activeTab === "applications" && (
                 <div className="sm:w-48">
                   <select
                     value={statusFilter}
@@ -241,35 +262,62 @@ export default function AdminDashboard() {
                 <div className="w-8 h-8 border-2 border-tech-blue/30 border-t-tech-blue rounded-full animate-spin mx-auto mb-4" />
                 <p className="text-foreground/70">Loading...</p>
               </div>
-            ) : activeTab === 'applications' ? (
+            ) : activeTab === "applications" ? (
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead className="border-b border-border-subtle">
                     <tr>
-                      <th className="px-6 py-4 text-left text-foreground font-medium">Applicant</th>
-                      <th className="px-6 py-4 text-left text-foreground font-medium">Position</th>
-                      <th className="px-6 py-4 text-left text-foreground font-medium">Experience</th>
-                      <th className="px-6 py-4 text-left text-foreground font-medium">Status</th>
-                      <th className="px-6 py-4 text-left text-foreground font-medium">Applied</th>
-                      <th className="px-6 py-4 text-left text-foreground font-medium">Actions</th>
+                      <th className="px-6 py-4 text-left text-foreground font-medium">
+                        Applicant
+                      </th>
+                      <th className="px-6 py-4 text-left text-foreground font-medium">
+                        Position
+                      </th>
+                      <th className="px-6 py-4 text-left text-foreground font-medium">
+                        Experience
+                      </th>
+                      <th className="px-6 py-4 text-left text-foreground font-medium">
+                        Status
+                      </th>
+                      <th className="px-6 py-4 text-left text-foreground font-medium">
+                        Applied
+                      </th>
+                      <th className="px-6 py-4 text-left text-foreground font-medium">
+                        Actions
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
                     {filteredApplications.map((app) => (
-                      <tr key={app.id} className="border-b border-border-subtle/50 hover:bg-background/50">
+                      <tr
+                        key={app.id}
+                        className="border-b border-border-subtle/50 hover:bg-background/50"
+                      >
                         <td className="px-6 py-4">
                           <div>
-                            <div className="font-medium text-foreground">{app.full_name}</div>
-                            <div className="text-sm text-foreground/70">{app.email}</div>
-                            <div className="text-sm text-foreground/70">{app.phone}</div>
+                            <div className="font-medium text-foreground">
+                              {app.full_name}
+                            </div>
+                            <div className="text-sm text-foreground/70">
+                              {app.email}
+                            </div>
+                            <div className="text-sm text-foreground/70">
+                              {app.phone}
+                            </div>
                           </div>
                         </td>
-                        <td className="px-6 py-4 text-foreground">{app.position}</td>
-                        <td className="px-6 py-4 text-foreground">{app.experience}</td>
+                        <td className="px-6 py-4 text-foreground">
+                          {app.position}
+                        </td>
+                        <td className="px-6 py-4 text-foreground">
+                          {app.experience}
+                        </td>
                         <td className="px-6 py-4">
                           <select
                             value={app.status}
-                            onChange={(e) => updateApplicationStatus(app.id, e.target.value)}
+                            onChange={(e) =>
+                              updateApplicationStatus(app.id, e.target.value)
+                            }
                             className="bg-background border border-border-subtle rounded px-3 py-1 text-sm text-foreground"
                           >
                             <option value="pending">Pending</option>
@@ -295,7 +343,9 @@ export default function AdminDashboard() {
                               </a>
                             )}
                             <button
-                              onClick={() => {/* Add view details modal */}}
+                              onClick={() => {
+                                /* Add view details modal */
+                              }}
                               className="p-2 bg-primary/10 text-primary rounded-lg hover:bg-primary/20 transition-colors"
                               title="View Details"
                             >
@@ -307,7 +357,7 @@ export default function AdminDashboard() {
                     ))}
                   </tbody>
                 </table>
-                
+
                 {filteredApplications.length === 0 && (
                   <div className="p-12 text-center text-foreground/70">
                     No applications found.
@@ -319,26 +369,48 @@ export default function AdminDashboard() {
                 <table className="w-full">
                   <thead className="border-b border-border-subtle">
                     <tr>
-                      <th className="px-6 py-4 text-left text-foreground font-medium">Contact</th>
-                      <th className="px-6 py-4 text-left text-foreground font-medium">Company</th>
-                      <th className="px-6 py-4 text-left text-foreground font-medium">Message</th>
-                      <th className="px-6 py-4 text-left text-foreground font-medium">Date</th>
+                      <th className="px-6 py-4 text-left text-foreground font-medium">
+                        Contact
+                      </th>
+                      <th className="px-6 py-4 text-left text-foreground font-medium">
+                        Company
+                      </th>
+                      <th className="px-6 py-4 text-left text-foreground font-medium">
+                        Message
+                      </th>
+                      <th className="px-6 py-4 text-left text-foreground font-medium">
+                        Date
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
                     {filteredContacts.map((contact) => (
-                      <tr key={contact.id} className="border-b border-border-subtle/50 hover:bg-background/50">
+                      <tr
+                        key={contact.id}
+                        className="border-b border-border-subtle/50 hover:bg-background/50"
+                      >
                         <td className="px-6 py-4">
                           <div>
-                            <div className="font-medium text-foreground">{contact.name}</div>
-                            <div className="text-sm text-foreground/70">{contact.email}</div>
+                            <div className="font-medium text-foreground">
+                              {contact.name}
+                            </div>
+                            <div className="text-sm text-foreground/70">
+                              {contact.email}
+                            </div>
                             {contact.phone && (
-                              <div className="text-sm text-foreground/70">{contact.phone}</div>
+                              <div className="text-sm text-foreground/70">
+                                {contact.phone}
+                              </div>
                             )}
                           </div>
                         </td>
-                        <td className="px-6 py-4 text-foreground">{contact.company || '-'}</td>
-                        <td className="px-6 py-4 text-foreground max-w-xs truncate" title={contact.message}>
+                        <td className="px-6 py-4 text-foreground">
+                          {contact.company || "-"}
+                        </td>
+                        <td
+                          className="px-6 py-4 text-foreground max-w-xs truncate"
+                          title={contact.message}
+                        >
                           {contact.message}
                         </td>
                         <td className="px-6 py-4 text-foreground/70 text-sm">
@@ -348,7 +420,7 @@ export default function AdminDashboard() {
                     ))}
                   </tbody>
                 </table>
-                
+
                 {filteredContacts.length === 0 && (
                   <div className="p-12 text-center text-foreground/70">
                     No contact messages found.
@@ -360,5 +432,5 @@ export default function AdminDashboard() {
         </div>
       </div>
     </div>
-  )
+  );
 }

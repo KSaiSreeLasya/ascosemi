@@ -68,12 +68,14 @@ export default function Header() {
                   className="flex items-center gap-2 text-foreground/80 hover:text-tech-blue transition-colors duration-200"
                 >
                   <User className="w-4 h-4" />
-                  <span className="max-w-32 truncate">{user.user_metadata?.full_name || user.email}</span>
+                  <span className="max-w-32 truncate">
+                    {user.user_metadata?.full_name || user.email}
+                  </span>
                 </button>
 
                 {showUserMenu && (
                   <div className="absolute right-0 top-full mt-2 w-48 bg-card-bg border border-border-subtle rounded-lg shadow-lg py-2 z-50">
-                    {user.email?.includes('admin') && (
+                    {user.email?.includes("admin") && (
                       <Link
                         to="/admin"
                         className="block px-4 py-2 text-foreground/80 hover:text-tech-blue hover:bg-background/50 transition-colors"
@@ -142,10 +144,12 @@ export default function Header() {
                   <div className="py-2 text-foreground/80 border-t border-border-subtle">
                     <div className="flex items-center gap-2 mb-2">
                       <User className="w-4 h-4" />
-                      <span className="truncate">{user.user_metadata?.full_name || user.email}</span>
+                      <span className="truncate">
+                        {user.user_metadata?.full_name || user.email}
+                      </span>
                     </div>
                   </div>
-                  {user.email?.includes('admin') && (
+                  {user.email?.includes("admin") && (
                     <Link
                       to="/admin"
                       className="text-foreground/80 hover:text-tech-blue transition-colors duration-200 py-2"
