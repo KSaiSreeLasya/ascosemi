@@ -34,15 +34,12 @@ export default function Header() {
       <div className="container mx-auto px-4 lg:px-8">
         <nav className="flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center">
             <img
               src="https://cdn.builder.io/api/v1/image/assets%2F9cb17e967f804ce2b909c6bc3232a9f0%2F8ee6d0821d4340c299bf526d740adcab?format=webp&width=200"
               alt="ASOCSEMI Logo"
               className="h-8 lg:h-10 w-auto"
             />
-            <div className="text-xl lg:text-2xl font-bold text-gradient">
-              ASOCSEMI
-            </div>
           </div>
 
           {/* Desktop Navigation */}
