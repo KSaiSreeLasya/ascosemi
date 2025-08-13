@@ -39,7 +39,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setLoading(false);
         }
       } catch (error) {
-        console.warn('Auth initialization error:', error);
+        console.warn("Auth initialization error:", error);
         if (mounted) {
           setSession(null);
           setUser(null);
@@ -72,7 +72,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         subscription?.unsubscribe();
       };
     } catch (error) {
-      console.warn('Auth state change setup error:', error);
+      console.warn("Auth state change setup error:", error);
       return () => {
         mounted = false;
       };

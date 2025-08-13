@@ -17,7 +17,7 @@ export default function Header() {
     user = auth.user;
     signOut = auth.signOut;
   } catch (error) {
-    console.warn('Auth context not available in Header:', error);
+    console.warn("Auth context not available in Header:", error);
   }
 
   useEffect(() => {

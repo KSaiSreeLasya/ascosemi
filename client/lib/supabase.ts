@@ -101,17 +101,17 @@ const createSupabaseClient = () => {
                 currentUser ? { user: currentUser } : null,
               );
             } catch (error) {
-              console.warn('Mock auth state change callback error:', error);
+              console.warn("Mock auth state change callback error:", error);
             }
           }, 0);
           return {
             data: {
               subscription: {
                 unsubscribe: () => {
-                  console.log('Mock auth subscription unsubscribed');
-                }
-              }
-            }
+                  console.log("Mock auth subscription unsubscribed");
+                },
+              },
+            },
           };
         },
       },
