@@ -137,21 +137,53 @@ export default function Header() {
                   {link.name}
                 </Link>
               ))}
-              <Link
-                to="/login"
-                className="text-foreground/80 hover:text-tech-blue transition-colors duration-200 py-2 flex items-center gap-2"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                <User className="w-4 h-4" />
-                Log In
-              </Link>
-              <Link
-                to="/get-started"
-                className="bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-3 rounded-md text-center transition-all duration-200"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Get Started
-              </Link>
+              {user ? (
+                <>
+                  <div className="py-2 text-foreground/80 border-t border-border-subtle">
+                    <div className="flex items-center gap-2 mb-2">
+                      <User className="w-4 h-4" />
+                      <span className="truncate">{user.user_metadata?.full_name || user.email}</span>
+                    </div>
+                  </div>
+                  {user.email?.includes('admin') && (
+                    <Link
+                      to="/admin"
+                      className="text-foreground/80 hover:text-tech-blue transition-colors duration-200 py-2"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Admin Dashboard
+                    </Link>
+                  )}
+                  <button
+                    onClick={() => {
+                      signOut();
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className="w-full text-left text-foreground/80 hover:text-tech-blue transition-colors duration-200 py-2 flex items-center gap-2"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    Sign Out
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link
+                    to="/login"
+                    className="text-foreground/80 hover:text-tech-blue transition-colors duration-200 py-2 flex items-center gap-2"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <User className="w-4 h-4" />
+                    Log In
+                  </Link>
+                  <Link
+                    to="/get-started"
+                    className="bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-3 rounded-md text-center transition-all duration-200"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Get Started
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         )}
