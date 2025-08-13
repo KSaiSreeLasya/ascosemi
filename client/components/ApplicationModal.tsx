@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { X, Upload, Send } from "lucide-react";
 import Swal from "sweetalert2";
+import { supabase } from "../lib/supabase";
+import { useAuth } from "../contexts/AuthContext";
 
 interface ApplicationModalProps {
   isOpen: boolean;
@@ -17,16 +19,19 @@ export default function ApplicationModal({
   jobDepartment,
   jobLocation,
 }: ApplicationModalProps) {
+  const { user } = useAuth();
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
-    email: "",
+    email: user?.email || "",
     phone: "",
-    position: "",
-    startDate: "",
+    position: jobTitle,
+    experience: "",
+    coverLetter: "",
     linkedinUrl: "",
     cvFile: null as File | null,
   });
+  const [uploading, setUploading] = useState(false);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
@@ -46,8 +51,34 @@ export default function ApplicationModal({
     }));
   };
 
+  const uploadResume = async (file: File): Promise<string | null> => {
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+      const filePath = `resumes/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('resumes')
+        .upload(filePath, file);
+
+      if (uploadError) {
+        throw uploadError;
+      }
+
+      const { data } = supabase.storage
+        .from('resumes')
+        .getPublicUrl(filePath);
+
+      return data.publicUrl;
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      throw error;
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setUploading(true);
 
     // Show loading
     Swal.fire({
@@ -61,14 +92,30 @@ export default function ApplicationModal({
       },
     });
 
-    // Simulate API call
-    setTimeout(() => {
-      console.log("Application submitted:", {
-        ...formData,
-        jobTitle,
-        jobDepartment,
-        jobLocation,
-      });
+    try {
+      let resumeUrl = null;
+
+      // Upload resume if provided
+      if (formData.cvFile) {
+        resumeUrl = await uploadResume(formData.cvFile);
+      }
+
+      // Submit application to database
+      const { error } = await supabase
+        .from('job_applications')
+        .insert([{
+          user_id: user?.id || null,
+          full_name: `${formData.firstName} ${formData.lastName}`,
+          email: formData.email,
+          phone: formData.phone,
+          position: formData.position,
+          experience: formData.experience,
+          cover_letter: formData.coverLetter,
+          resume_url: resumeUrl,
+          status: 'pending'
+        }]);
+
+      if (error) throw error;
 
       Swal.fire({
         title: "Application Submitted!",
@@ -82,15 +129,25 @@ export default function ApplicationModal({
       setFormData({
         firstName: "",
         lastName: "",
-        email: "",
+        email: user?.email || "",
         phone: "",
-        position: "",
-        startDate: "",
+        position: jobTitle,
+        experience: "",
+        coverLetter: "",
         linkedinUrl: "",
         cvFile: null,
       });
       onClose();
-    }, 2000);
+    } catch (error: any) {
+      Swal.fire({
+        title: "Error",
+        text: `Failed to submit application: ${error.message}`,
+        icon: "error",
+        confirmButtonText: "OK",
+      });
+    } finally {
+      setUploading(false);
+    }
   };
 
   if (!isOpen) return null;
