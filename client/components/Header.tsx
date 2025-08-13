@@ -7,7 +7,18 @@ export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
-  const { user, signOut } = useAuth();
+
+  // Safely get auth context with fallback
+  let user = null;
+  let signOut = async () => {};
+
+  try {
+    const auth = useAuth();
+    user = auth.user;
+    signOut = auth.signOut;
+  } catch (error) {
+    console.warn('Auth context not available in Header:', error);
+  }
 
   useEffect(() => {
     const handleScroll = () => {
